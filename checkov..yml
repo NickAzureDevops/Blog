@@ -1,0 +1,41 @@
+trigger:
+
+- nick
+
+pr:
+- main
+
+pool:
+  vmImage: ubuntu-20.04
+
+variables:
+- name: directory
+  value: $(System.DefaultWorkingDirectory)/terraform
+
+stages:
+  - stage: "runCheckov"
+    displayName: "Checkov - Scan Terraform files"
+    jobs:
+      - job: "runCheckov"
+        displayName: "Checkov > Pull, run and publish results of Checkov scan"
+        steps:
+          - bash: |
+                  docker pull bridgecrew/checkov
+            workingDirectory: $(directory)
+            displayName: "Pull > bridgecrew/checkov"
+          - bash: |
+              docker run \
+                --volume $(directory):/tf bridgecrew/checkov \
+                --directory /tf \
+                --output junitxml \
+                --soft-fail > $(directory)/CheckovReport.xml              
+            workingDirectory: $(directory)
+            displayName: "Run > checkov"
+          - task: PublishTestResults@2
+            inputs:
+              testRunTitle: "Checkov Results"
+              failTaskOnFailedTests: true
+              testResultsFormat: "JUnit"
+              testResultsFiles: "CheckovReport.xml"
+              searchFolder: "$(directory)"
+            displayName: "Publish > Checkov scan results"

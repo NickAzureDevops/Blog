@@ -1,0 +1,86 @@
+name: $(BuildDefinitionName)_$(date:yyyyMMdd)$(rev:.r)
+
+variables:
+  - group: tfstate
+
+pool:
+  vmImage: ubuntu-latest
+
+trigger:
+  batch: true 
+  branches:
+    include:
+      - release
+
+# Don't run against PRs
+pr: none
+
+stages :
+  - stage: validate
+    displayName: 'Validate Terraform'
+    jobs:
+    - job: validate
+      displayName: 'Validate Terraform'
+      continueOnError: false
+      steps:
+      - task: TerraformInstaller@0
+        displayName: 'Install Terraform'
+        inputs:
+          terraformVersion: '1.2.9'
+      - task: TerraformCLI@0
+        displayName: 'Initiate Terraform'
+        inputs:
+          command: 'init'
+          workingDirectory: '$(System.DefaultWorkingDirectory)/iac/terraform'
+          backendType: 'azurerm'
+          backendServiceArm: 'AzureServiceConnection'
+          backendAzureRmSubscriptionId: 'b9a8b22f-7693-4f61-b656-8b2dcc6b6074'
+          ensureBackend: true
+          backendAzureRmResourceGroupName: 'devopsoh65335staterg'
+          backendAzureRmResourceGroupLocation: 'UkSouth'
+          backendAzureRmStorageAccountName: 'devopsoh65335statest'
+          backendAzureRmContainerName: 'tfstate'
+          backendAzureRmKey: 'terraformdev.tfstate'
+          allowTelemetryCollection: true
+      - task: TerraformCLI@0
+        displayName: 'Validate Terraform'
+        inputs:
+          command: 'validate'
+          workingDirectory: '$(System.DefaultWorkingDirectory)/iac/terraform'
+          allowTelemetryCollection: true
+  - stage: plan
+    dependsOn: [validate]
+    condition: succeeded('validate')
+    displayName: 'Create Terraform Plan'
+    jobs:
+      - job: terraform_apply_develop   
+        displayName: 'Create Terraform Plan'
+        steps:
+          - task: TerraformInstaller@0
+            displayName: 'Install Terraform'
+            inputs:
+              terraformVersion: '1.2.9'
+          - task: TerraformCLI@0
+            displayName: 'Initiate Terraform'
+            inputs:
+              command: 'init'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/iac/terraform'
+              backendType: 'azurerm'
+              backendServiceArm: 'AzureServiceConnection'
+              backendAzureRmSubscriptionId: 'b9a8b22f-7693-4f61-b656-8b2dcc6b6074'
+              ensureBackend: true
+              backendAzureRmResourceGroupName: 'devopsoh65335staterg'
+              backendAzureRmResourceGroupLocation: 'UkSouth'
+              backendAzureRmStorageAccountName: 'devopsoh65335statest'
+              backendAzureRmContainerName: 'tfstate'
+              backendAzureRmKey: 'terraformdev.tfstate'
+              allowTelemetryCollection: true
+          - task: TerraformCLI@0
+            displayName: 'Make a Terraform plan'
+            inputs:
+              command: 'plan'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/iac/terraform'
+              environmentServiceName: 'AzureServiceConnection'
+              providerAzureRmSubscriptionId: 'b9a8b22f-7693-4f61-b656-8b2dcc6b6074'
+              commandOptions: '-var "location=uksouth"'
+              allowTelemetryCollection: true

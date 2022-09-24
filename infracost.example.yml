@@ -1,5 +1,5 @@
 pr:
-  - master
+  - main
 
 variables:
   - name: TF_ROOT
@@ -24,14 +24,6 @@ jobs:
         inputs:
           apiKey: $(infracostApiKey)
 
-      # Clone the base branch of the pull request (e.g. main/master) into a temp directory.
-      - bash: |
-          branch=$(System.PullRequest.TargetBranch)
-          branch=${branch#refs/heads/}
-          # Try adding the following to git clone if you're having issues cloning a private repo: --config http.extraheader="AUTHORIZATION: bearer $(System.AccessToken)"
-          git clone $(Build.Repository.Uri) --branch=${branch} --single-branch /tmp/base
-        displayName: Checkout base branch
-
       # Generate an Infracost cost estimate baseline from the comparison branch, so that Infracost can compare the cost difference.
       - bash: |
           infracost breakdown --path=$(TF_ROOT) \
@@ -46,14 +38,3 @@ jobs:
                          --compare-to=/tmp/infracost-base.json \
                          --out-file=/tmp/infracost.json
         displayName: Generate Infracost diff
-
-
-      - task: PublishTestResults@2
-        inputs:
-          testRunTitle: "Checkov Results"
-          failTaskOnFailedTests: true
-          testResultsFormat: "JUnit"
-          testResultsFiles: "CheckovReport.xml"
-          searchFolder: "$(directory)"
-          displayName: "Publish > Checkov scan results"
-
