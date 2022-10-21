@@ -33,7 +33,7 @@ stages :
           backendServiceArm: 'SP'
           backendAzureRmResourceGroupName: 'rg-tfstate-prd01'
           backendAzureRmStorageAccountName: 'saterraformdevops'
-          backendAzureRmContainerName: 'terraformdemo'
+          backendAzureRmContainerName: 'tfstate'
           backendAzureRmKey: 'terraformdev.tfstate'
           workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
       - task: TerraformTaskV1@0
@@ -60,7 +60,7 @@ stages :
                   backendServiceArm: 'SP'
                   backendAzureRmResourceGroupName: 'rg-tfstate-prd01'
                   backendAzureRmStorageAccountName: 'saterraformdevops'
-                  backendAzureRmContainerName: 'terraformdemo'
+                  backendAzureRmContainerName: 'tfstate'
                   backendAzureRmKey: 'terraformdev.tfstate'
                   workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
               - task: TerraformTaskV1@0
@@ -90,7 +90,7 @@ stages :
                   backendServiceArm: 'SP'
                   backendAzureRmResourceGroupName: 'rg-tfstate-prd01'
                   backendAzureRmStorageAccountName: 'saterraformdevops'
-                  backendAzureRmContainerName: 'terraformdemo'
+                  backendAzureRmContainerName: 'tfstate'
                   backendAzureRmKey: 'terraformdev.tfstate' 
                   workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
               - task: TerraformTaskV1@0
