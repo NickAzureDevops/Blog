@@ -4,5 +4,5 @@
     provider: 'azurerm'
     command: 'plan'
     environmentServiceNameAzureRM: '2022-Platforms-Academy(fad4eaae-097a-42ed-9940-b2e0ea4aa98a)'
-    workingDirectory: $(System.DefaultWorkingDirectory)/azure/components/aks
+    workingDirectory: $(System.DefaultWorkingDirectory)/
     commandOptions: '-var-file=../../environments/${{ parameters.environment }}.tfvars'

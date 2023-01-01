@@ -1,0 +1,9 @@
+- task: TerraformTaskV2@2
+  displayName: 'terraform apply'
+  condition: eq(variables['Action'], 'Apply')
+  inputs:
+    provider: 'azurerm'
+    command: 'apply'
+    environmentServiceNameAzureRM: ''
+    workingDirectory: $(System.DefaultWorkingDirectory)/
+    commandOptions: '-var-file=../../environments/${{ parameters.environment }}.tfvars'
