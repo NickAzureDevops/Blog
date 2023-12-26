@@ -3,7 +3,7 @@ name: storage-sftp-auto-enable
 on:
   workflow_dispatch:
   schedule:
-    - cron: "30 6 * * 1-5" # Every weekday at 6:30am BST
+    - cron: "0 20 * * *"
 permissions:
   id-token: write
 jobs:
