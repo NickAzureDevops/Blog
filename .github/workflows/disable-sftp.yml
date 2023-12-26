@@ -1,5 +1,5 @@
 
-name: storage-sftp-auto-enable
+name: storage-sftp-auto-disable
 on:
   workflow_dispatch:
   schedule:
