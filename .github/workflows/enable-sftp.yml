@@ -19,4 +19,4 @@ jobs:
           tenant-id: edb75dc6-1736-4e41-97cc-d8a56f171897
           allow-no-subscriptions: true
       - name: sftp enable
-        run: ./scripts/blob-storage/enable_sftp.sh
+        run: ./automate-sftp-storage-account/scripts/enable_sftp.sh
