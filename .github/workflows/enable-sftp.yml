@@ -1,0 +1,22 @@
+
+name: storage-sftp-auto-enable
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "30 6 * * 1-5" # Every weekday at 6:30am BST
+permissions:
+  id-token: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: "Az CLI login"
+        uses: azure/login@v1
+        with:
+          client-id: fc5b24f8-b09c-4e90-a277-f434897eac1a
+          tenant-id: edb75dc6-1736-4e41-97cc-d8a56f171897
+          allow-no-subscriptions: true
+      - name: sftp enable
+        run: ./scripts/blob-storage/enable_sftp.sh
